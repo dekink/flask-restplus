@@ -1,59 +1,59 @@
-# from flask import Flask, Blueprint
-# from flask_restplus import Resource, Api, fields
-# from marshmallow import Schema, fields as ma_fields, post_load
+from flask import Flask, Blueprint
+from flask_restplus import Resource, Api, fields
+from marshmallow import Schema, fields as ma_fields, post_load
 
-# app = Flask(__name__)
-# blueprint = Blueprint('api', __name__, url_prefix='/api')
-# api = Api(blueprint, doc='/documentation') #doc=False
+app = Flask(__name__)
+blueprint = Blueprint('api', __name__, url_prefix='/api')
+api = Api(blueprint, doc='/documentation') #doc=False
 
-# app.register_blueprint(blueprint)
+app.register_blueprint(blueprint)
 
-# app.config['SWAGGER_UI_JSONEDITOR'] = True
-
-# # a_language = api.model('Language', {'language': fields.String('The language.'),
-# #                                     'id': fields.Integer('ID')})
-
-# class TheLanguage(object):
-#     def __init__(self, language, framework):
-#         self.language = language
-#         self.framework = framework
-
-#     def __repr__(self):
-#        return '{} is the language. {} is the framework'.format(self.language, self.framework)
-
-# class LanguageSchema(Schema):
-#     language = ma_fields.String()
-#     framework = ma_fields.String()
-
-#     @post_load
-#     def create_language(self, data):
-#         return TheLanguage(**data)
+app.config['SWAGGER_UI_JSONEDITOR'] = True
 
 # a_language = api.model('Language', {'language': fields.String('The language.'),
-#                                     'framework': fields.String('The framework')})
+#                                     'id': fields.Integer('ID')})
 
-# languages = []
-# python = {'language': 'Python', 'id': 1}
-# python = TheLanguage(language='Python', framework='Flask')
-# languages.append(python)
+class TheLanguage(object):
+    def __init__(self, language, framework):
+        self.language = language
+        self.framework = framework
 
-# @api.route('/language')
-# class Language(Resource):
+    def __repr__(self):
+       return '{} is the language. {} is the framework'.format(self.language, self.framework)
 
-#     # @api.marshal_with(a_language, envelope='the_data')
-#     def get(self):
-#         schema = LanguageSchema(many=True)
+class LanguageSchema(Schema):
+    language = ma_fields.String()
+    framework = ma_fields.String()
 
-#         return schema.dump(languages)
+    @post_load
+    def create_language(self, data):
+        return TheLanguage(**data)
 
-#     @api.expect(a_language)
-#     def post(self):
-#         schema = LanguageSchema()
-#         new_language = schema.load(api.payload)
-#         print(new_language.data)
-#         # new_language['id'] = len(languages) + 1
-#         languages.append(new_language.data)
-#         return {'result': 'Language added'}, 201
+a_language = api.model('Language', {'language': fields.String('The language.'),
+                                    'framework': fields.String('The framework')})
 
-# if __name__ == '__main__':
-#     app.run(debug=True)
+languages = []
+python = {'language': 'Python', 'id': 1}
+python = TheLanguage(language='Python', framework='Flask')
+languages.append(python)
+
+@api.route('/language')
+class Language(Resource):
+
+    # @api.marshal_with(a_language, envelope='the_data')
+    def get(self):
+        schema = LanguageSchema(many=True)
+
+        return schema.dump(languages)
+
+    @api.expect(a_language)
+    def post(self):
+        schema = LanguageSchema()
+        new_language = schema.load(api.payload)
+        print(new_language.data)
+        # new_language['id'] = len(languages) + 1
+        languages.append(new_language.data)
+        return {'result': 'Language added'}, 201
+
+if __name__ == '__main__':
+    app.run(debug=True)

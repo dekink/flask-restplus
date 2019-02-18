@@ -1,8 +1,3 @@
-# from flask import Flask, Blueprint
-# from flask_pymongo import PyMongo
-# from flask_restplus import Resource, Api, fields
-# from . import user_api
-
 
 # def create_app(object_name):
 #     app = Flask(__name__)
@@ -16,9 +11,7 @@
 #     app.register_blueprint(blueprint)
 #     return app
 
-from flask import Blueprint
-from flask_restplus import Api
 
-
-blueprint = Blueprint('api', __name__, url_prefix='/api')
-api_user = Api(blueprint, doc='/doc')
+from . import api_user
+from . import api_audio
+from . import swagger
