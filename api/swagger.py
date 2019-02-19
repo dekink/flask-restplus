@@ -1,19 +1,32 @@
 from flask_restplus import Namespace
 from flask import Blueprint
-from flask_restplus import Api
+from flask_restplus import Api, reqparse
+
+
+blueprint = Blueprint('api', __name__, url_prefix='/api')
+api = Api(blueprint, doc='/documentation')
 
 #namespace
 api_user = Namespace('user', description='api_user.py')
 api_audio = Namespace('audio', description='api_audio.py')
-
-blueprint = Blueprint('api', __name__, url_prefix='/api')
-api = Api(blueprint, doc='/documentation')
 api.add_namespace(api_audio)
 api.add_namespace(api_user)
 
-#query
+#parser
 parser = api.parser()
 parser.add_argument('actor_id', type=str, required=True)
 
 user_post_parser = api.parser()
-user_post_parser.add_argument('Content-Type', location='form')
+user_post_parser.add_argument('json_data', type=str, location='form')
+# user_post_parser.add_argument('user_url', type=str, location='files')
+
+kk_parser = api.parser()
+kk_parser.add_argument('user_url', type=str, location='files')
+
+user_put_parser = api.parser()
+user_put_parser.add_argument('param', type=int, help='Some param', location='form')
+user_put_parser.add_argument('in_files', type=str, location='files')
+
+#header
+header_arguments = reqparse.RequestParser()
+header_arguments.add_argument('header', type=str, required=True, location='header')
