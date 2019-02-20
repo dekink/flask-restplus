@@ -1,7 +1,7 @@
 from flask_restplus import Resource
 from . import swagger as sw
 from . import model as m
-from flask import request, send_file, redirect
+from flask import request, send_file, redirect, jsonify
 import json
 from io import BytesIO
 from functools import wraps
@@ -9,8 +9,8 @@ from functools import wraps
 
 user_doc = []
 doc = {
-    'name': 'daeun',
-    'phone': '010-5555-5555'
+    'name': 'none',
+    'phone': 'none'
 }
 
 def token_required(f):
@@ -29,7 +29,9 @@ def token_required(f):
 
     return decorated
 
-# @sw.api.representation('multipart/form-data')
+
+#response content type
+# @sw.api.representation('multipart/form-data') 
 # @sw.api.representation('image/jpeg')
 @sw.api_user.route('/<string:oid>')
 class User(Resource):
@@ -38,12 +40,8 @@ class User(Resource):
     def get(self, oid):
         for user in user_doc:
             if user['id'] == int(oid):
-                return {
-                    'result': user
-                }
-        return {
-            'result': 'not found user'
-        }
+                return user
+        return doc
 
     @sw.api_user.expect(m.user_db) #payload
     @token_required
@@ -75,25 +73,25 @@ class User(Resource):
 
 @sw.api_user.route('')
 class UserParams(Resource):
+    @token_required
+    @sw.api_user.marshal_with(m.user_db, envelope='result')
+    def get(self):
+        return user_doc
+
     # @token_required
     # def get(self):
-    #     print('keim')
-    #     return {'result': user_doc}
-
-    @token_required
-    def get(self):
-        with open('api/img/cat.jpg', 'rb') as f:
-            img_file = BytesIO(f.read())
-        return send_file(img_file, mimetype='image/jpeg', attachment_filename='cat.jpg', cache_timeout=-1)
+    #     with open('api/img/cat.jpg', 'rb') as f:
+    #         img_file = BytesIO(f.read())
+    #     return send_file(img_file, mimetype='image/jpeg', attachment_filename='cat.jpg', cache_timeout=-1)
 
     @token_required
     @sw.api_user.expect(sw.user_post_parser, sw.kk_parser)
     def post(self):
         form_data = request.form.to_dict()
         data = json.loads(form_data["json_data"])
-        return {
+        return jsonify({
             'result': data
-        }
+        })
     
     @token_required
     def delete(self):
@@ -101,6 +99,7 @@ class UserParams(Resource):
         return {
             'result': 'delete users'
         }
+
 
 @sw.api_user.route('/data')
 class UserFormData(Resource):
@@ -110,8 +109,6 @@ class UserFormData(Resource):
         form_data = request.form.to_dict()
         data = json.loads(form_data['json_data'])
         print(data)
-        # doc = sw.api_user.payload
-        # user_doc.append(doc)
         return {
             'result': {
                 'oid': oid,
@@ -123,8 +120,12 @@ class UserFormData(Resource):
 @sw.api_user.route('/something')
 @sw.api_user.doc(params={'user_id': 'The User ID'})
 class Random(Resource):
+    # @sw.api_user.hide
     @token_required
-    @sw.api_user.hide
+    @sw.api_user.doc(responses={
+        'result': 'user_id',
+        'status': 'statis'
+    })
     def get(self):
         user_id = request.args.get('user_id')
         return {
