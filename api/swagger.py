@@ -1,10 +1,17 @@
-from flask_restplus import Namespace
-from flask import Blueprint
-from flask_restplus import Api, reqparse
+from flask import Blueprint, request
+from flask_restplus import Api, reqparse, Namespace
 
+
+authorizations = {
+    'apikey': {
+        'type': 'apiKey',
+        'in': 'header',
+        'name': 'X-API-KEY'
+    }
+}
 
 blueprint = Blueprint('api', __name__, url_prefix='/api')
-api = Api(blueprint, doc='/documentation')
+api = Api(blueprint, doc='/documentation', authorizations=authorizations, security='apikey', version='3.0')
 
 #namespace
 api_user = Namespace('user', description='api_user.py')
@@ -30,3 +37,5 @@ user_put_parser.add_argument('in_files', type=str, location='files')
 #header
 header_arguments = reqparse.RequestParser()
 header_arguments.add_argument('header', type=str, required=True, location='header')
+
+
