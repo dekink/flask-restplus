@@ -1,9 +1,10 @@
 from flask import Flask, Blueprint
 from flask_restplus import Resource, Api, fields
 
+
 app = Flask(__name__)
 blueprint = Blueprint('api', __name__, url_prefix='/api')
-api = Api(blueprint, doc='/documentation') #doc=False
+api = Api(blueprint, doc='/documentation')  # doc=False
 
 app.register_blueprint(blueprint)
 

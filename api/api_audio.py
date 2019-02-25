@@ -11,6 +11,14 @@ class Audio(Resource):
     def post(self):
         args = sw.parser.parse_args()
         return {'result': args['actor_id']}, 200
-        
+
     def put(self):
         return {'result': 'put'}
+
+
+@sw.api_audio.reout('/<string:oid>')
+class AudioId(Recource):
+    def post(self, oid):
+        return {
+            'result': oid
+        }
