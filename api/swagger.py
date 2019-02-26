@@ -12,6 +12,7 @@ authorizations = {
 
 blueprint = Blueprint('api', __name__, url_prefix='/api')
 api = Api(blueprint, doc='/documentation', authorizations=authorizations, security='apikey')
+# api = Api(blueprint, doc=False, authorizations=authorizations, security='apikey')
 
 #namespace
 api_user = Namespace('user', description='api_user.py')

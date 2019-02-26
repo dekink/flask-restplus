@@ -16,8 +16,8 @@ class Audio(Resource):
         return {'result': 'put'}
 
 
-@sw.api_audio.reout('/<string:oid>')
-class AudioId(Recource):
+@sw.api_audio.route('/<string:oid>')
+class AudioId(Resource):
     def post(self, oid):
         return {
             'result': oid

@@ -30,7 +30,7 @@ def token_required(f):
     return decorated
 
 
-#response content type
+# response content type
 # @sw.api.representation('multipart/form-data') 
 # @sw.api.representation('image/jpeg')
 @sw.api_user.route('/<string:oid>')
@@ -73,25 +73,24 @@ class User(Resource):
 
 @sw.api_user.route('')
 class UserParams(Resource):
-    @token_required
-    @sw.api_user.marshal_with(m.user_db, envelope='result')
-    def get(self):
-        return user_doc
-
     # @token_required
+    # @sw.api_user.marshal_with(m.user_db, envelope='result')
     # def get(self):
-    #     with open('api/img/cat.jpg', 'rb') as f:
-    #         img_file = BytesIO(f.read())
-    #     return send_file(img_file, mimetype='image/jpeg', attachment_filename='cat.jpg', cache_timeout=-1)
+    #     return user_doc
 
     @token_required
+    def get(self):
+        with open('api/img/cat.jpg', 'rb') as f:
+            img_file = BytesIO(f.read())
+        return send_file(img_file, mimetype='image/jpeg', attachment_filename='cat.jpg', cache_timeout=-1)
+
+    @token_required
+    @sw.api_user.marshal_with(m.user_db_1, envelope='result')
     @sw.api_user.expect(sw.user_post_parser, sw.kk_parser)
     def post(self):
         form_data = request.form.to_dict()
         data = json.loads(form_data["json_data"])
-        return jsonify({
-            'result': data
-        })
+        return data
     
     @token_required
     def delete(self):
@@ -136,6 +135,7 @@ class Random(Resource):
 
 @sw.api_user.route('/redirect')
 class Redirect(Resource):
+    @sw.api_user.doc('cats')
     @token_required
     def get(self):
         print('in redirect get')
