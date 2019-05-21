@@ -4,7 +4,7 @@ import stripe
 import os
 
 pub_key = 'pk_test_iOpIzptrQvCVGOuVOTwH870g008eEhq9Ys'
-secret_key = os.environ['STRIPE_SECRET_KEY']
+secret_key = os.environ.get('STRIPE_SECRET_KEY', '')
 
 stripe.api_key = secret_key
 
